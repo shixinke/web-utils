@@ -7,7 +7,7 @@
 
 - Request Parameter Parser : Like @RequestBody and @RequestParam in Spring
 - Sentinel Client Component : Make sentinel easier to use
-- CAT Client Component : Make sentinel easier to use
+- CAT Client Component : Make CAT easier to use
 
 
 ## Maven dependency
