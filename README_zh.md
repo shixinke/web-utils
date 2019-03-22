@@ -28,4 +28,4 @@
 
 ## License
 
-Fescar is under the Apache 2.0 license. See the [LICENSE](https://github.com/shixinke/web-utils/blob/master/LICENSE.txt) file for details.
+Web-Utils is under the Apache 2.0 license. See the [LICENSE](https://github.com/shixinke/web-utils/blob/master/LICENSE.txt) file for details.
