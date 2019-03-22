@@ -10,7 +10,10 @@
 - CAT客户端组件 : 使CAT客户端更加容易使用
 
 
-## 使用：加载maven依赖
+## 用法
+
+### 1.加载maven依赖
+
 ```xml
 <dependency>
     <groupId>com.shixinke.utils</groupId>
@@ -18,6 +21,39 @@
     <version>1.0.0</version>
 </dependency>
 
+```
+
+### 2.将注解解析器加到配置中
+
+新建拦截器配置文件　
+
+```java
+@Configuration
+public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new RequestParameterResolver());
+    }
+}
+```
+
+### 3.在控制器方法中调用注解
+
+```java
+@RestController
+@Slf4j
+class TestController {
+    
+    @RequestMapping("/list")
+    public ResponseDTO query(@RequestParameter SearchDTO searchDTO) {
+        try {
+            log.info(searchDTO.getPage());
+        } catch (Exception ex) {
+            log.error("exception:", ex);
+        }
+        return ResponseDTO.success();
+    }
+}
 ```
 
 

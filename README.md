@@ -10,7 +10,10 @@
 - CAT Client Component : Make CAT easier to use
 
 
-## Maven dependency
+## Usage
+
+### Step1 : add maven dependency
+
 ```xml
 <dependency>
     <groupId>com.shixinke.utils</groupId>
@@ -19,6 +22,39 @@
 </dependency>
 
 ```
+
+### Step2 : add configuration
+
+
+```java
+@Configuration
+public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new RequestParameterResolver());
+    }
+}
+```
+
+### Step3:Use annotations in the controller
+
+```java
+@RestController
+@Slf4j
+class TestController {
+    
+    @RequestMapping("/list")
+    public ResponseDTO query(@RequestParameter SearchDTO searchDTO) {
+        try {
+            log.info(searchDTO.getPage());
+        } catch (Exception ex) {
+            log.error("exception:", ex);
+        }
+        return ResponseDTO.success();
+    }
+}
+```
+
 
 
 ## Author
