@@ -51,7 +51,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
      * @param modelAndViewContainer
      * @param nativeWebRequest
      * @param webDataBinderFactory
-     * @return
+     * @return Object
      * @throws Exception
      */
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
@@ -80,7 +80,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
      * resolve form argument
      * @param parameter
      * @param webRequest
-     * @return
+     * @return Object
      */
     private Object resolveFormArgument(MethodParameter parameter, NativeWebRequest webRequest, RequestParameter requestParameter) {
         Object obj = BeanUtils.instantiateClass(parameter.getParameterType());
@@ -125,7 +125,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
      * resolve json argument
      * @param parameter
      * @param webRequest
-     * @return
+     * @return Object
      */
     private Object resolveJsonArgument(MethodParameter parameter, NativeWebRequest webRequest, RequestParameter requestParameter) {
         String key = requestParameter.key();
@@ -157,7 +157,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
      * parse value
      * @param value
      * @param parameterType
-     * @return
+     * @return Object
      */
     private Object parseValue(Object value, Class<?> parameterType) {
         if (value != null && parameterType != null) {
@@ -200,6 +200,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * basic data type parse
+     * @return Object
      */
     private Object parsePrimitive(String parameterTypeName, Object value) {
         final String booleanTypeName = "boolean";
@@ -239,6 +240,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * basic package type parse
+     * @return Object
      */
     private Object parseBasicTypeWrapper(Class<?> parameterType, Object value) {
         if (Number.class.isAssignableFrom(parameterType)) {
@@ -268,7 +270,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
      * string parse
      * @param parameterType
      * @param value
-     * @return
+     * @return Object
      */
     private Object parseStringWrapper(Class<?> parameterType, Object value) {
         String val = (String) value;
@@ -302,6 +304,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * is basic data type
+     * @return boolean
      */
     private boolean isBasicDataTypes(Class clazz) {
         Set<Class> classSet = new HashSet<Class>(8);
@@ -319,6 +322,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * get request body
+     * @return String
      */
     private String getRequestBody(String key, NativeWebRequest webRequest) {
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
@@ -349,7 +353,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     /**
      * is json format
      * @param text
-     * @return
+     * @return boolean
      */
     private boolean isJson(String text) {
         if (text.startsWith(LEFT_BRACE) && text.endsWith(RIGHT_BRACE)) {
