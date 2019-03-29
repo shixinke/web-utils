@@ -59,7 +59,6 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         if (requestParameter == null) {
             return null;
         }
-
         HttpServletRequest servletRequest = nativeWebRequest.getNativeRequest(HttpServletRequest.class);
         String contentType = servletRequest.getContentType();
         String jsonContentType = "application/json";
@@ -106,7 +105,22 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                 key = NameStyleUtil.underlineToCamel(paramName);
             }
             Class<?> propertyType = wrapper.getPropertyType(key);
+            log.info("class={}", propertyType.getGenericInterfaces().);
+
+
+            log.info("property={}", propertyType.getGenericInterfaces());
             if (propertyType != null && !propertyType.isPrimitive() && !isBasicDataTypes(propertyType) && propertyType != String.class) {
+
+                if (isArray(propertyType, o)) {
+                    o = splitStringToArray(o.toString(), requestParameter.delimiter());
+                } else if (isList(propertyType, o)) {
+                    o = splitStringToList(o.toString(), requestParameter.delimiter());
+                } else if (isSet(propertyType, o)) {
+                    o = splitStringToSet(o.toString(), requestParameter.delimiter());
+                } else {
+                    o = JSON.parseObject(o.toString(), propertyType);
+                }
+                o = o.toString().split(requestParameter.delimiter());
                 o = JSON.parseObject(o.toString(), propertyType);
             } else {
                 o = parseValue(o, propertyType);
@@ -302,6 +316,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         return null;
     }
 
+
+
     /**
      * is basic data type
      * @return boolean
@@ -317,6 +333,35 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         classSet.add(Byte.class);
         classSet.add(Character.class);
         return classSet.contains(clazz);
+    }
+
+    private boolean isList(Class clazz, Object o) {
+        return (clazz == List.class || Arrays.asList(clazz.getInterfaces()).contains(List.class)) && o instanceof String;
+    }
+
+    private boolean isArray(Class clazz, Object o) {
+       return clazz.isArray() && o instanceof String;
+    }
+
+    private boolean isSet(Class clazz, Object o) {
+        return (clazz == Set.class || Arrays.asList(clazz.getInterfaces()).contains(Set.class)) && o instanceof String;
+    }
+
+    private String[] splitStringToArray(String val, String delimiter) {
+        return val.split(delimiter);
+    }
+
+    private List splitStringToList(String val, String delimiter) {
+        String[] arr = val.split(delimiter);
+        return Arrays.asList(arr);
+    }
+
+    private Set splitStringToSet(String val, String delimiter) {
+        String[] arr = val.split(delimiter);
+        Set set = Collections.emptySet();
+        log.info("set={};list={}", set, arr);
+        Collections.addAll(set, arr);
+        return set;
     }
 
 

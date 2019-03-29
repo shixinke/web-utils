@@ -36,4 +36,10 @@ public @interface RequestParameter {
      * @return String
      */
     String key() default "";
+
+    /**
+     * delimiter for split string to list or set
+     * @return String[]
+     */
+    String delimiter() default ",";
 }
