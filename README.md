@@ -16,11 +16,10 @@
 
 ```xml
 <dependency>
-    <groupId>com.shixinke.utils</groupId>
-    <artifactId>web-utils</artifactId>
-    <version>1.0.0</version>
+  <groupId>com.shixinke.utils</groupId>
+  <artifactId>web-utils</artifactId>
+  <version>1.0.0</version>
 </dependency>
-
 ```
 
 ### Step2 : add configuration

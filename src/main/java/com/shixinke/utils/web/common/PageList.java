@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Pagination
  * @author shixinke
  * @version 1.0
- * @Description Pagination
- * @Date 19-2-22 下午4:39
+ * created 19-2-22 下午4:39
  */
 @Data
 public class PageList<T> {
@@ -51,11 +51,11 @@ public class PageList<T> {
     }
 
     public PageList(long total, int pageSize) {
-        this(total, 1, pageSize, null;
+        this(total, 1, pageSize, null);
     }
 
     public PageList(long total, int page, int pageSize) {
-        this(total, page, pageSize, null;
+        this(total, page, pageSize, null);
     }
 
     public static int calcPages(long total, int pageSize) {

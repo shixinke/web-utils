@@ -3,10 +3,10 @@ package com.shixinke.utils.web.annotation;
 import java.lang.annotation.*;
 
 /**
+ * request parameter annotation
  * @author shixinke
  * @version 1.0
- * @Description request parameter annotation
- * @Date 19-2-22 下午2:46
+ * created 19-2-22 下午2:46
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
@@ -14,26 +14,26 @@ import java.lang.annotation.*;
 @Documented
 public @interface RequestParameter {
     /**
-     * the request
-     * @return
+     * the naming style of client
+     * @return NameStyle
      */
     NameStyle source() default NameStyle.UNDERLINE;
 
     /**
-     *
-     * @return
+     * content type of the request
+     * @return RequestContentType
      */
     RequestContentType type() default RequestContentType.AUTO;
 
     /**
-     *
-     * @return
+     * get the parameters from the header
+     * @return boolean
      */
     boolean withHeader() default false;
 
     /**
-     * 请求的参数名称
-     * @return
+     * the name of the parameter
+     * @return String
      */
     String key() default "";
 }

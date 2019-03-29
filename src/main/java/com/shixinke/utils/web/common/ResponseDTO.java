@@ -5,8 +5,7 @@ import lombok.Data;
 /**
  * @author shixinke
  * @version 1.0
- * @Description reponse
- * @Date 19-2-22 下午2:07
+ * created 19-2-22 下午2:07
  */
 @Data
 public class ResponseDTO<T> {

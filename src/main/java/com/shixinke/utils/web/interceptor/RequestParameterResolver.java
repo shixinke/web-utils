@@ -3,28 +3,43 @@ package com.shixinke.utils.web.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import com.shixinke.utils.web.annotation.NameStyle;
+import com.shixinke.utils.web.annotation.RequestContentType;
+import com.shixinke.utils.web.annotation.RequestParameter;
+import com.shixinke.utils.web.util.Converters;
+import com.shixinke.utils.web.util.NameStyleUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.core.MethodParameter;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
 /**
+ * request parameter resolver
  * @author jiangfangtao
  * @version 1.0
- * @Description 请求参数解析器
- * @Date 19-2-26 下午12:48
+ * created 19-2-26 12:48
  */
 @Slf4j
 public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     private static final String NULL_STRING = "null";
 
-    @Override
+
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.hasParameterAnnotation(RequestParameter.class);
     }
 
-    @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
         RequestParameter requestParameter = methodParameter.getParameterAnnotation(RequestParameter.class);
         if (requestParameter == null) {
@@ -48,7 +63,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * 解析form类型的参数
+     * resolve form arguments
      * @param parameter
      * @param webRequest
      * @return
@@ -89,7 +104,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * 解析JSON格式的参数
+     * resolve json argument
      * @param parameter
      * @param webRequest
      * @return
@@ -122,25 +137,25 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                 return parseStringWrapper(parameterType, value);
             }
             /**
-             * 基本类型
+             * basic type(int,boolean,short,long)
              */
             if (parameterType.isPrimitive()) {
                 return parsePrimitive(parameterType.getName(), value);
             }
             /**
-             * 基本包装类型
+             * basic package type
              */
             if (isBasicDataTypes(parameterType)) {
                 return parseBasicTypeWrapper(parameterType, value);
 
             } else if (parameterType == String.class) {
                 /**
-                 * 字符串类型
+                 * string
                  */
                 return value.toString();
             }
             /**
-             * 其他类型
+             * other data types:like object
              */
             Object result = JSON.parseObject(value.toString(), parameterType);
             if (result == null) {
@@ -156,7 +171,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * 基本类型解析
+     * parse basic type
      */
     private Object parsePrimitive(String parameterTypeName, Object value) {
         final String booleanTypeName = "boolean";
@@ -195,7 +210,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * 基本类型包装类解析
+     * parse basic package type
      */
     private Object parseBasicTypeWrapper(Class<?> parameterType, Object value) {
         if (Number.class.isAssignableFrom(parameterType)) {
@@ -221,6 +236,12 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         return null;
     }
 
+    /**
+     * parse string
+     * @param parameterType
+     * @param value
+     * @return
+     */
     private Object parseStringWrapper(Class<?> parameterType, Object value) {
         String val = (String) value;
         if (value == null || NULL_STRING.equals(val)) {
@@ -252,7 +273,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * 判断是否为基本数据类型包装类
+     * determine whether the specified object is a basic type
      */
     private boolean isBasicDataTypes(Class clazz) {
         Set<Class> classSet = new HashSet<Class>(8);
@@ -269,7 +290,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
 
     /**
-     * 获取请求体JSON字符串
+     * get request body from the request
      */
     private String getRequestBody(String key, NativeWebRequest webRequest) {
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);

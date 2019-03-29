@@ -3,8 +3,7 @@ package com.shixinke.utils.web.common;
 /**
  * @author shixinke
  * @version 1.0
- * @Description 搜索传输基类
- * @Date 19-2-22 下午4:38
+ * created 19-2-22 下午4:38
  */
 public class SearchDTO implements RequestDTO {
     private Integer page;

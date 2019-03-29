@@ -2,10 +2,10 @@ package com.shixinke.utils.web.util;
 
 
 /**
+ * naming style util
  * @author shixinke
  * @version 1.0
- * @Description 命名工具类
- * @Date 19-2-22 下午3:06
+ * created 19-2-22 下午3:06
  */
 public class NameStyleUtil {
 
