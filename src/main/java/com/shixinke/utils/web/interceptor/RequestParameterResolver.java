@@ -26,7 +26,7 @@ import java.util.*;
 
 /**
  * request parameter resolver
- * @author jiangfangtao
+ * @author shixinke
  * @version 1.0
  * created 19-2-26 12:48
  */
@@ -35,11 +35,25 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     private static final String NULL_STRING = "null";
 
+    private static final String METHOD_GET = "GET";
+
+    private static final String LEFT_BRACE = "{";
+
+    private static final String RIGHT_BRACE = "}";
 
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.hasParameterAnnotation(RequestParameter.class);
     }
 
+    /**
+     * resolve argument
+     * @param methodParameter
+     * @param modelAndViewContainer
+     * @param nativeWebRequest
+     * @param webDataBinderFactory
+     * @return
+     * @throws Exception
+     */
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
         RequestParameter requestParameter = methodParameter.getParameterAnnotation(RequestParameter.class);
         if (requestParameter == null) {
@@ -63,7 +77,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * resolve form arguments
+     * resolve form argument
      * @param parameter
      * @param webRequest
      * @return
@@ -72,6 +86,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         Object obj = BeanUtils.instantiateClass(parameter.getParameterType());
         BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
         Iterator<String> paramNames = webRequest.getParameterNames();
+        HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
         List<String> paramNameList = new ArrayList<String>(5);
         if (!requestParameter.withHeader()) {
             paramNameList = Converters.iteratorToList(paramNames);
@@ -82,6 +97,9 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
             Object o = webRequest.getParameter(paramName);
             if (requestParameter.withHeader() && o == null) {
                 o = webRequest.getHeader(paramName);
+            }
+            if (METHOD_GET.equalsIgnoreCase(servletRequest.getMethod()) && isJson(paramName)) {
+                return resolveJsonArgument(parameter, webRequest, requestParameter);
             }
             String key = paramName;
             if (requestParameter.source().equals(NameStyle.UNDERLINE)) {
@@ -111,11 +129,16 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
      */
     private Object resolveJsonArgument(MethodParameter parameter, NativeWebRequest webRequest, RequestParameter requestParameter) {
         String key = requestParameter.key();
+        Class<?> parameterType = parameter.getParameterType();
         String jsonBody = getRequestBody(key, webRequest);
         JSONObject jsonObject = JSON.parseObject(jsonBody);
         Object value;
         if (jsonObject == null) {
-            return null;
+            try {
+                return parameterType.newInstance();
+            } catch (Exception ex) {
+                return new Object();
+            }
         }
         if (!StringUtils.isEmpty(key)) {
             value = jsonObject.get(key);
@@ -127,17 +150,22 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
             }
         }
 
-        Class<?> parameterType = parameter.getParameterType();
         return parseValue(value, parameterType);
     }
 
+    /**
+     * parse value
+     * @param value
+     * @param parameterType
+     * @return
+     */
     private Object parseValue(Object value, Class<?> parameterType) {
-        if (value != null) {
+        if (value != null && parameterType != null) {
             if (value instanceof String) {
                 return parseStringWrapper(parameterType, value);
             }
             /**
-             * basic type(int,boolean,short,long)
+             * basic data type
              */
             if (parameterType.isPrimitive()) {
                 return parsePrimitive(parameterType.getName(), value);
@@ -155,7 +183,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                 return value.toString();
             }
             /**
-             * other data types:like object
+             * other data type,like object
              */
             Object result = JSON.parseObject(value.toString(), parameterType);
             if (result == null) {
@@ -171,7 +199,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * parse basic type
+     * basic data type parse
      */
     private Object parsePrimitive(String parameterTypeName, Object value) {
         final String booleanTypeName = "boolean";
@@ -210,7 +238,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * parse basic package type
+     * basic package type parse
      */
     private Object parseBasicTypeWrapper(Class<?> parameterType, Object value) {
         if (Number.class.isAssignableFrom(parameterType)) {
@@ -237,7 +265,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * parse string
+     * string parse
      * @param parameterType
      * @param value
      * @return
@@ -273,7 +301,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * determine whether the specified object is a basic type
+     * is basic data type
      */
     private boolean isBasicDataTypes(Class clazz) {
         Set<Class> classSet = new HashSet<Class>(8);
@@ -290,7 +318,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
 
     /**
-     * get request body from the request
+     * get request body
      */
     private String getRequestBody(String key, NativeWebRequest webRequest) {
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
@@ -306,7 +334,28 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                 throw new RuntimeException(e);
             }
         }
+        if (jsonBody == null || METHOD_GET.equalsIgnoreCase(servletRequest.getMethod())) {
+            Map<String, String[]> params = servletRequest.getParameterMap();
+            if (params != null && params.size() > 0) {
+                for (String k : params.keySet()) {
+                    jsonBody = k;
+                    break;
+                }
+            }
+        }
         return jsonBody;
+    }
+
+    /**
+     * is json format
+     * @param text
+     * @return
+     */
+    private boolean isJson(String text) {
+        if (text.startsWith(LEFT_BRACE) && text.endsWith(RIGHT_BRACE)) {
+            return true;
+        }
+        return false;
     }
 }
 
