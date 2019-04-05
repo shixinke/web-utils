@@ -15,6 +15,6 @@ import java.util.*;
 public class UserSearchDTO extends SearchDTO {
     private Long userId;
     private String nickname;
-    private HashSet<Long> itemIds;
+    private SortedSet<Long> itemIds;
     private Map<String, String> configMap;
 }

@@ -105,10 +105,6 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                 key = NameStyleUtil.underlineToCamel(paramName);
             }
             Class<?> propertyType = wrapper.getPropertyType(key);
-            log.info("class={}", propertyType.getGenericInterfaces().);
-
-
-            log.info("property={}", propertyType.getGenericInterfaces());
             if (propertyType != null && !propertyType.isPrimitive() && !isBasicDataTypes(propertyType) && propertyType != String.class) {
 
                 if (isArray(propertyType, o)) {
@@ -120,8 +116,6 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
                 } else {
                     o = JSON.parseObject(o.toString(), propertyType);
                 }
-                o = o.toString().split(requestParameter.delimiter());
-                o = JSON.parseObject(o.toString(), propertyType);
             } else {
                 o = parseValue(o, propertyType);
             }
@@ -335,32 +329,67 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         return classSet.contains(clazz);
     }
 
+    /**
+     * is list
+     * @param clazz
+     * @param o
+     * @return
+     */
     private boolean isList(Class clazz, Object o) {
         return (clazz == List.class || Arrays.asList(clazz.getInterfaces()).contains(List.class)) && o instanceof String;
     }
 
+    /**
+     * is array
+     * @param clazz
+     * @param o
+     * @return
+     */
     private boolean isArray(Class clazz, Object o) {
        return clazz.isArray() && o instanceof String;
     }
 
+    /**
+     * is set
+     * @param clazz
+     * @param o
+     * @return
+     */
     private boolean isSet(Class clazz, Object o) {
         return (clazz == Set.class || Arrays.asList(clazz.getInterfaces()).contains(Set.class)) && o instanceof String;
     }
 
+    /**
+     * split string to array
+     * @param val
+     * @param delimiter
+     * @return
+     */
     private String[] splitStringToArray(String val, String delimiter) {
         return val.split(delimiter);
     }
 
+    /**
+     * split string to list
+     * @param val
+     * @param delimiter
+     * @return
+     */
     private List splitStringToList(String val, String delimiter) {
         String[] arr = val.split(delimiter);
         return Arrays.asList(arr);
     }
 
+    /**
+     * split string to set
+     * @param val
+     * @param delimiter
+     * @return
+     */
     private Set splitStringToSet(String val, String delimiter) {
         String[] arr = val.split(delimiter);
-        Set set = Collections.emptySet();
-        log.info("set={};list={}", set, arr);
-        Collections.addAll(set, arr);
+        HashSet set = new HashSet();
+        set.addAll(Arrays.asList(arr));
         return set;
     }
 
