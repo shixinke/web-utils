@@ -35,7 +35,19 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
 }
 ```
 
-### Step3:Use annotations in the controller
+### step3 : define a bean for request parameters
+
+```java
+@Data
+public class UserSearchDTO extends SearchDTO {
+    private Long userId;
+    private String nickname;
+    private List<Long> itemIds;
+    private Map<String, String> configMap;
+}
+```
+
+### Step4:Use annotations in the controller
 
 ```java
 @RestController
@@ -53,6 +65,16 @@ class TestController {
     }
 }
 ```
+
+### step5:send a request 
+
+
+`http://localhost:8080/list?user_id=123&item_ids=1,2,3`
+
+`UserSearchDTO`:
+
+- userId -> 123
+- itemIds -> [1,2,3]
 
 
 

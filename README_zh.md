@@ -36,7 +36,19 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
 }
 ```
 
-### 3.在控制器方法中调用注解
+### 3.定义接收参数的bean
+
+```java
+@Data
+public class UserSearchDTO extends SearchDTO {
+    private Long userId;
+    private String nickname;
+    private List<Long> itemIds;
+    private Map<String, String> configMap;
+}
+```
+
+### 4.在控制器方法中调用注解
 
 ```java
 @RestController
@@ -44,9 +56,9 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
 class TestController {
     
     @RequestMapping("/list")
-    public ResponseDTO query(@RequestParameter SearchDTO searchDTO) {
+    public ResponseDTO query(@RequestParameter UserSearchDTO searchDTO) {
         try {
-            log.info(searchDTO.getPage());
+            log.info(searchDTO.getUserId());
         } catch (Exception ex) {
             log.error("exception:", ex);
         }
@@ -54,6 +66,14 @@ class TestController {
     }
 }
 ```
+
+### 5.发起请求
+
+`http://localhost:8080/list?user_id=123&item_ids=1,2,3`
+
+以上的请求会被解析为UserSearchDTO的Bean:
+- user_id参数对应到userId
+- item_ids参数对应到itemIds这个列表
 
 
 ## 作者
