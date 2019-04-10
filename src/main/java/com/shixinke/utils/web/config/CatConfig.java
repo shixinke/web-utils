@@ -26,7 +26,7 @@ public class CatConfig {
     private static final String ENABLE_FLAG = "true";
 
     /**
-     * @author  jiangfangtao
+     * @author  shixinke
      * @Description  自动给所有URL埋点
      * @method catFilter
      * @param
