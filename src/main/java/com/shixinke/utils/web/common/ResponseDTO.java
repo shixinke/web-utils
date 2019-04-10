@@ -1,6 +1,8 @@
 package com.shixinke.utils.web.common;
 
+import com.shixinke.utils.web.exception.CommonException;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author shixinke
@@ -8,6 +10,7 @@ import lombok.Data;
  * created 19-2-22 下午2:07
  */
 @Data
+@Slf4j
 public class ResponseDTO<T> {
     private Integer code;
     private String message;
@@ -66,6 +69,33 @@ public class ResponseDTO<T> {
         this.success = success;
         this.data = data;
     }
+
+    public ResponseDTO setError(int code, String message) {
+        this.setCode(code);
+        this.setSuccess(false);
+        this.setMessage(message);
+        this.setData(null);
+        return this;
+    }
+
+
+    public ResponseDTO setError(CommonException ex) {
+        this.setError(ex.getCode(), ex.getMessage());
+        return this;
+    }
+
+    public ResponseDTO <T> setEmpty(String message, Class<T> clz) {
+        this.setCode(SUCCESS_CODE);
+        this.setMessage(message);
+        this.setSuccess(false);
+        try {
+            this.setData(clz.newInstance());
+        } catch (Exception e) {
+            log.error("未找到{}的无参实例化方法", clz.getCanonicalName());
+        }
+        return this;
+    }
+
 
     public static ResponseDTO success() {
         ResponseDTO responseDTO = new ResponseDTO(SUCCESS_CODE, SUCCESS_MESSAGE, true);
