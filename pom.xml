@@ -139,9 +139,19 @@
 
     <repositories>
         <repository>
-            <id>aliyun-maven</id>
+            <id>aliyun</id>
             <name>aliyun maven</name>
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+
+        <repository>
+            <id>unidal</id>
+            <url>http://unidal.org/nexus/content/groups/public/</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
     <build>
