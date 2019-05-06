@@ -8,7 +8,7 @@ package com.shixinke.utils.web.exception;
 public class ServiceException extends CommonException {
 
     /**
-     * 服务异常码
+     * service exception code
      */
     private static final int SERVICE_ERROR_CODE = 5001;
 

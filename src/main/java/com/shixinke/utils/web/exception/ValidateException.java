@@ -7,7 +7,7 @@ package com.shixinke.utils.web.exception;
  */
 public class ValidateException extends CommonException {
     /**
-     * 验证异常码
+     * validate exception code
      */
     private static final int VALIDATE_ERROR_CODE = 4001;
     public ValidateException() {
