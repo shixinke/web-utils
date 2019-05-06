@@ -32,7 +32,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         return converter;
     }
 
-    @Override
+
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new RequestParameterResolver());
     }
