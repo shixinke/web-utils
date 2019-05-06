@@ -41,22 +41,19 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     private static final String RIGHT_BRACE = "}";
 
-    @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.hasParameterAnnotation(RequestParameter.class);
     }
 
     /**
      * resolve argument
-     * @param methodParameter
-     * @param modelAndViewContainer
-     * @param nativeWebRequest
-     * @param webDataBinderFactory
+     * @param methodParameter the object of method parameter
+     * @param modelAndViewContainer the object of model and view container
+     * @param nativeWebRequest the object of native web request
+     * @param webDataBinderFactory the web data binding factory
      * @return Object
-     * @throws Exception
      */
-    @Override
-    public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory)  {
         RequestParameter requestParameter = methodParameter.getParameterAnnotation(RequestParameter.class);
         if (requestParameter == null) {
             return null;
@@ -79,8 +76,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * resolve form argument
-     * @param parameter
-     * @param webRequest
+     * @param parameter the object of method parameter
+     * @param webRequest the object of web request
      * @return Object
      */
     private Object resolveFormArgument(MethodParameter parameter, NativeWebRequest webRequest, RequestParameter requestParameter) {
@@ -133,8 +130,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * resolve json argument
-     * @param parameter
-     * @param webRequest
+     * @param parameter the object of method parameter
+     * @param webRequest the object of web request
      * @return Object
      */
     private Object resolveJsonArgument(MethodParameter parameter, NativeWebRequest webRequest, RequestParameter requestParameter) {
@@ -165,8 +162,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * parse value
-     * @param value
-     * @param parameterType
+     * @param value the value of parameter
+     * @param parameterType the type of parameter
      * @return Object
      */
     private Object parseValue(Object value, Class<?> parameterType) {
@@ -210,6 +207,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * basic data type parse
+     * @param parameterTypeName  the type of parameter
+     * @param value the value of parameter
      * @return Object
      */
     private Object parsePrimitive(String parameterTypeName, Object value) {
@@ -250,6 +249,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * basic package type parse
+     * @param parameterType the type of parameter
+     * @param value the value of parameter
      * @return Object
      */
     private Object parseBasicTypeWrapper(Class<?> parameterType, Object value) {
@@ -278,8 +279,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * string parse
-     * @param parameterType
-     * @param value
+     * @param parameterType the type of parameter
+     * @param value the value of parameter
      * @return Object
      */
     private Object parseStringWrapper(Class<?> parameterType, Object value) {
@@ -316,6 +317,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * is basic data type
+     * @param clazz the class of the parameter
      * @return boolean
      */
     private boolean isBasicDataTypes(Class clazz) {
@@ -333,8 +335,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * is list
-     * @param clazz
-     * @param o
+     * @param clazz the class of parameter
+     * @param o the value of parameter
      * @return
      */
     private boolean isList(Class clazz, Object o) {
@@ -343,8 +345,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * is array
-     * @param clazz
-     * @param o
+     * @param clazz the class of parameter
+     * @param o the value of parameter
      * @return
      */
     private boolean isArray(Class clazz, Object o) {
@@ -353,8 +355,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * is set
-     * @param clazz
-     * @param o
+     * @param clazz the class of parameter
+     * @param o the value of parameter
      * @return
      */
     private boolean isSet(Class clazz, Object o) {
@@ -363,8 +365,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * split string to array
-     * @param val
-     * @param delimiter
+     * @param val the value of parameter
+     * @param delimiter the delimiter of string
      * @return
      */
     private String[] splitStringToArray(String val, String delimiter) {
@@ -373,8 +375,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * split string to list
-     * @param val
-     * @param delimiter
+     * @param val the value of parameter
+     * @param delimiter the delimiter of string
      * @return
      */
     private List splitStringToList(String val, String delimiter) {
@@ -384,8 +386,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * split string to set
-     * @param val
-     * @param delimiter
+     * @param val the value of parameter
+     * @param delimiter the delimiter of string
      * @return
      */
     private Set splitStringToSet(String val, String delimiter) {
@@ -398,6 +400,8 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * get request body
+     * @param key the key of the parameter
+     * @param webRequest  the object of web request
      * @return String
      */
     private String getRequestBody(String key, NativeWebRequest webRequest) {
@@ -428,7 +432,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     /**
      * is json format
-     * @param text
+     * @param text the value of the parameter
      * @return boolean
      */
     private boolean isJson(String text) {

@@ -12,10 +12,10 @@ public class NameStyleUtil {
     private static final String UNDERLINE = "_";
 
     /***
-     * 下划线命名转为驼峰命名
-     * @param source 下划线命名的字符串
+     * underline to camel
+     * @param source variable name
+     * @return String
      */
-
     public static String underlineToCamel(String source) {
         StringBuffer result = new StringBuffer();
         String[] sourceArr = source.split(UNDERLINE);
@@ -32,9 +32,9 @@ public class NameStyleUtil {
 
 
     /***
-     * 驼峰命名转为下划线命名
-     * @param source 驼峰命名的字符串
-     *
+     * camel to underline
+     * @param source variable name
+     * @return String
      */
     public static String camelToUnderline(String source) {
         StringBuffer stringBuffer = new StringBuffer(source);

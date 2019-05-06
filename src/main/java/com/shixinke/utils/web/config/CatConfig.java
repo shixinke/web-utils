@@ -28,12 +28,10 @@ public class CatConfig {
     private static final String ENABLE_FLAG = "true";
 
     /**
+     * url auto track
      * @author  shixinke
-     * @Description  自动给所有URL埋点
-     * @method catFilter
-     * @param
      * @return  org.springframework.boot.web.servlet.FilterRegistrationBean
-     * @date  19-2-28 下午4:39
+     * crated : 19-2-28 下午4:39
      */
     @Bean
     public FilterRegistrationBean catFilter() {
