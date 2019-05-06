@@ -23,6 +23,8 @@ public class CatConfig {
     @Autowired
     private Environment env;
 
+    private static final String ENABLED = "cat.enabled";
+
     private static final String ENABLE_FLAG = "true";
 
     /**
@@ -50,7 +52,7 @@ public class CatConfig {
     }
 
     public boolean getEnable() {
-        String enable = env.getProperty("cat.enabled");
+        String enable = env.getProperty(ENABLED);
         if (ENABLE_FLAG.equalsIgnoreCase(enable)) {
             return true;
         } else {

@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 public class ApiExceptionHandler implements ExceptionHandler<ResponseDTO> {
     static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
+    @Override
     public ResponseDTO handle(Exception ex, String message, Class clz) {
         ResponseDTO responseDTO = ResponseDTO.error();
         String msg = null;
@@ -25,15 +26,15 @@ public class ApiExceptionHandler implements ExceptionHandler<ResponseDTO> {
         if (ex instanceof ValidateException) {
             msg = ex.getMessage();
             code = ((ValidateException) ex).getCode();
-            logger.error("参数验证失败:{}", ex);
+            logger.error("parameter validate failed:{}", ex);
         } else if (ex instanceof BlockException) {
             msg = Errors.FLOW_ERROR.getMessage();
             code = Errors.FLOW_ERROR.getCode();
-            logger.error("流量超过限制:{}", ex);
+            logger.error("flow control over the :{}", ex);
         } else {
-            msg = StringUtils.isEmpty(message) ? "未获取到数据" : message + "失败";
+            msg = StringUtils.isEmpty(message) ? "empty" : message + "failed";
             code = Errors.SERVER_ERROR.getCode();
-            logger.error("获取数据或操作失败:{}", ex);
+            logger.error("get data failed:{}", ex);
         }
         if (clz == null || clz == Nullable.class) {
             return responseDTO.setError(code, msg);

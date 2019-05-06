@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Exception handler
  * @param <T>
+ * @author shixinke
  */
 public interface ExceptionHandler<T> {
 

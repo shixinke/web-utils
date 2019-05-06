@@ -1,5 +1,9 @@
 package com.shixinke.utils.web.common;
 
+/**
+ * error enum
+ * @author shixinke
+ */
 public enum Errors {
     /**
      * validate error

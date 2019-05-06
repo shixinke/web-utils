@@ -41,6 +41,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     private static final String RIGHT_BRACE = "}";
 
+    @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.hasParameterAnnotation(RequestParameter.class);
     }
@@ -54,6 +55,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
      * @return Object
      * @throws Exception
      */
+    @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
         RequestParameter requestParameter = methodParameter.getParameterAnnotation(RequestParameter.class);
         if (requestParameter == null) {
@@ -86,7 +88,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
         BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
         Iterator<String> paramNames = webRequest.getParameterNames();
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        List<String> paramNameList = new ArrayList<String>(5);
+        List<String> paramNameList = null;
         if (!requestParameter.withHeader()) {
             paramNameList = Converters.iteratorToList(paramNames);
         } else {

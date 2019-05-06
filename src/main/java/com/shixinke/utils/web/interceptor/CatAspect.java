@@ -4,21 +4,35 @@ import com.dianping.cat.Cat;
 import com.dianping.cat.message.Message;
 import com.dianping.cat.message.Transaction;
 import com.shixinke.utils.web.annotation.cat.CatLog;
+import com.shixinke.utils.web.annotation.cat.CatLogType;
 import com.shixinke.utils.web.annotation.cat.Nullable;
+import com.shixinke.utils.web.config.CatConfig;
 import com.shixinke.utils.web.handler.ApiExceptionHandler;
 import com.shixinke.utils.web.handler.CacheExceptionHandler;
 import com.shixinke.utils.web.handler.SqlExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
 
 /**
  * @author shixinke
@@ -30,8 +44,11 @@ import java.lang.reflect.Method;
 @Slf4j
 public class CatAspect {
 
-    @Value("${cat.enabled}")
-    private boolean catEnabled;
+    @Autowired
+    private CatConfig catConfig;
+
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
     @Pointcut("@annotation(com.shixinke.utils.web.annotation.cat.CatLog)")
     private void pointCutMethodService(){
@@ -54,11 +71,15 @@ public class CatAspect {
             methodName = catLog.page();
         }
 
-        if (catEnabled) {
+        if (catConfig.getEnable()) {
             Cat.enable();
         } else {
             Cat.disable();
         }
+        if (StringUtils.isEmpty(className)) {
+            className = joinPoint.getSignature().getDeclaringType().getSimpleName();
+        }
+        sqlLog(joinPoint, catLog, className, methodName, args);
         Message message = getMessageObj(catLog, className, methodName, startTime);
         try {
             obj = joinPoint.proceed(args);
@@ -77,6 +98,14 @@ public class CatAspect {
         return obj;
     }
 
+    /**
+     * get the instance of message
+     * @param catLog
+     * @param className
+     * @param methodName
+     * @param startTime
+     * @return
+     */
     private Message getMessageObj(CatLog catLog, String className, String methodName, Long startTime) {
         Message message = Cat.newTransaction(catLog.methodType().getValue(), className + "."+methodName);
         switch (catLog.messageType()) {
@@ -107,7 +136,7 @@ public class CatAspect {
             try {
                 instance = cls.newInstance();
             } catch (Exception e) {
-                log.error("实例化{}类失败:{}", cls.getSimpleName(), ex);
+                log.error("initialize {} failed:{}", cls.getSimpleName(), ex);
             }
             Method[] methods = cls.getDeclaredMethods();
             for (Method m : methods) {
@@ -119,14 +148,14 @@ public class CatAspect {
                 try {
                     obj = method.invoke(instance, ex, catLog.remark(), catLog.empty());
                 } catch (Exception e) {
-                    log.error("执行方法{}失败:{}", method.getName(), e);
+                    log.error("execute the method {} failed:{}", method.getName(), e);
                 }
             } else {
                 String fullMethodName = cls.getName() + "." + catLog.exceptionHandler();
-                log.error("设置的异常处理方法{}不存在", fullMethodName);
+                log.error("the exception handler {} does not exists", fullMethodName);
             }
         } else {
-            log.debug("未设置异常处理方法,使用默认的处理方法");
+            log.debug("does not set the exception handler,use the default handler");
             switch (catLog.methodType()) {
                 case API:
                 case SEARCH:
@@ -146,5 +175,111 @@ public class CatAspect {
         }
         return obj;
     }
+
+    /**
+     * add sql log
+     * @param joinPoint
+     * @param catLog
+     * @param className
+     * @param methodName
+     * @param args
+     */
+    private void sqlLog(ProceedingJoinPoint joinPoint, CatLog catLog, String className, String methodName, Object[] args) {
+        if (catLog.methodType() == CatLogType.SQL) {
+            String methodPath = joinPoint.getSignature().getDeclaringType().getName() + "."+methodName;
+            log.info(methodPath);
+            MappedStatement mappedStatement = sqlSessionFactory.getConfiguration()
+                    .getMappedStatement(methodPath);
+            Object parameterObject = args;
+            if (args.length == 1) {
+                parameterObject = args[0];
+            }
+            BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
+            String sql = getSql(sqlSessionFactory.getConfiguration(), boundSql);
+            Cat.logEvent(CatLogType.SQL.getValue(), className + "." + methodName, Message.SUCCESS, sql);
+        }
+
+    }
+
+    /**
+     * parse sql
+     * @param configuration
+     * @param boundSql
+     * @return
+     */
+    private String getSql(Configuration configuration, BoundSql boundSql) {
+        Object parameterObject = boundSql.getParameterObject();
+        List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+        String sql = boundSql.getSql().replaceAll("[\\s]+", " ");
+        if (parameterMappings.size() > 0 && parameterObject != null) {
+            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+            if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+                sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(parameterObject)));
+            } else {
+                MetaObject metaObject = configuration.newMetaObject(parameterObject);
+                boolean isArray = isArray(parameterObject);
+                if (isArray) {
+                    Object[] parameters = (Object[]) parameterObject;
+                    for (int i = 0; i< parameterMappings.size(); i++) {
+                        if (i > parameters.length) {
+                            break;
+                        }
+                        Object obj = parameters[i];
+                        sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
+                    }
+                } else {
+                    for (ParameterMapping parameterMapping : parameterMappings) {
+                        String propertyName = parameterMapping.getProperty();
+                        if (metaObject.hasGetter(propertyName)) {
+                            Object obj = metaObject.getValue(propertyName);
+                            sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
+                        } else if (boundSql.hasAdditionalParameter(propertyName)) {
+                            Object obj = boundSql.getAdditionalParameter(propertyName);
+                            sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(getParameterValue(obj)));
+                        }
+                    }
+                }
+
+            }
+        }
+        return sql;
+    }
+
+    /**
+     * parameter value parser
+     * @param obj
+     * @return
+     */
+    private String getParameterValue(Object obj) {
+        String value = null;
+        if (obj instanceof String) {
+            value = "'" + obj.toString() + "'";
+        } else if (obj instanceof Date) {
+            DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
+            value = "'" + formatter.format((Date)obj) + "'";
+        } else {
+            if (obj != null) {
+                value = obj.toString();
+            } else {
+                value = "";
+            }
+
+        }
+        return value;
+    }
+
+    /**
+     * check the parameter
+     * @param obj
+     * @return
+     */
+    private static boolean isArray(Object obj) {
+        if( obj == null) {
+            return false;
+        }
+        return obj.getClass().isArray();
+    }
+
+
 
 }
