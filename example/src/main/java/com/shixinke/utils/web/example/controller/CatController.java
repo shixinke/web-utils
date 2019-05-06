@@ -28,7 +28,6 @@ public class CatController {
     @RequestMapping("list")
     @CatLog
     public ResponseDTO list(CouponSearchDTO couponSearchDTO) {
-        Cat.logError(new Exception("test"));
         return ResponseDTO.success(couponService.queryList(couponSearchDTO));
     }
 
