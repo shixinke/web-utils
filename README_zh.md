@@ -30,7 +30,7 @@
 
 ```java
 @Configuration
-public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
+public class InterceptorConfiguration implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(new RequestParameterResolver());

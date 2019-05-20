@@ -41,6 +41,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
 
     private static final String RIGHT_BRACE = "}";
 
+    @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.hasParameterAnnotation(RequestParameter.class);
     }
@@ -53,6 +54,7 @@ public class RequestParameterResolver implements HandlerMethodArgumentResolver {
      * @param webDataBinderFactory the web data binding factory
      * @return Object
      */
+    @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory)  {
         RequestParameter requestParameter = methodParameter.getParameterAnnotation(RequestParameter.class);
         if (requestParameter == null) {
