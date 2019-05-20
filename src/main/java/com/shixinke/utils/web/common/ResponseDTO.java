@@ -118,7 +118,7 @@ public class ResponseDTO<T> {
     }
 
     public static ResponseDTO success(int code, String message) {
-        ResponseDTO responseDTO = new ResponseDTO(code, message, true);
+        ResponseDTO responseDTO = new ResponseDTO(code, message, true, null);
         return responseDTO;
     }
 
@@ -138,17 +138,17 @@ public class ResponseDTO<T> {
     }
 
     public static ResponseDTO error() {
-        ResponseDTO responseDTO = new ResponseDTO(ERROR_CODE, ERROR_MESSAGE, false);
+        ResponseDTO responseDTO = new ResponseDTO(ERROR_CODE, ERROR_MESSAGE, false, null);
         return responseDTO;
     }
 
     public static ResponseDTO error(int code) {
-        ResponseDTO responseDTO = new ResponseDTO(code, ERROR_MESSAGE, false);
+        ResponseDTO responseDTO = new ResponseDTO(code, ERROR_MESSAGE, false, null);
         return responseDTO;
     }
 
     public static ResponseDTO error(String message) {
-        ResponseDTO responseDTO = new ResponseDTO(ERROR_CODE, message, false);
+        ResponseDTO responseDTO = new ResponseDTO(ERROR_CODE, message, false, null);
         return responseDTO;
     }
 
@@ -158,12 +158,12 @@ public class ResponseDTO<T> {
     }
 
     public static ResponseDTO error(int code, String message) {
-        ResponseDTO responseDTO = new ResponseDTO(code, message, false);
+        ResponseDTO responseDTO = new ResponseDTO(code, message, false, null);
         return responseDTO;
     }
 
     public static <T> ResponseDTO error(int code, T data) {
-        ResponseDTO responseDTO = new ResponseDTO(code, ERROR_MESSAGE, true, data);
+        ResponseDTO responseDTO = new ResponseDTO(code, ERROR_MESSAGE, false, data);
         return responseDTO;
     }
 
