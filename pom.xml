@@ -5,7 +5,7 @@
 
     <groupId>com.shixinke.utils</groupId>
     <artifactId>web-utils</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <name>web-utils</name>
     <description>Toolbox commonly used in web development</description>
     <url>https://github.com/shixinke/web-utils</url>
@@ -48,8 +48,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.version}</version>
         </dependency>
-
-
 
         <!-- test dependency-->
         <dependency>
