@@ -7,32 +7,28 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 追踪日志工具类
+ * trace log util
  * @author shixinke
  */
 @Slf4j
 public class TraceLogUtil {
 
     /**
-     * 自增ID
+     * atomic number
      */
     private static AtomicLong lastId  = new AtomicLong();
-    /**
-     * 启动加载的时间戳
-     */
-    private static final long NOW = System.currentTimeMillis();
 
     /**
-     * ip段分隔符
+     * the separator of ip address
      */
     private static final String IP_SEPARATOR_PATTERN = "\\.";
     /**
-     * traceId分割符
+     * the separator of trace id
      */
     private static final String TRACE_ID_SEPARATOR = "-";
 
     /**
-     * 获取唯一的请求追踪ID
+     * get trace id
      * @return String
      */
     public static String getTraceId() {
@@ -40,11 +36,11 @@ public class TraceLogUtil {
         if (ip == null) {
             ip = "127.0.0.1";
         }
-        return ipToHex(ip) + TRACE_ID_SEPARATOR + Long.toString(NOW, Character.MAX_RADIX) + TRACE_ID_SEPARATOR + lastId.incrementAndGet();
+        return ipToHex(ip) + TRACE_ID_SEPARATOR + Long.toString(System.currentTimeMillis(), Character.MAX_RADIX) + TRACE_ID_SEPARATOR + lastId.incrementAndGet();
     }
 
     /**
-     * 将IP转换成16进制数据
+     * transfer IP address to hex
      * @param ip
      * @return String
      */
@@ -61,7 +57,7 @@ public class TraceLogUtil {
     }
 
     /**
-     * 将16进制转化为IP
+     * transfer hex to IP address
      * @param hexString
      * @return
      */
@@ -81,7 +77,7 @@ public class TraceLogUtil {
 
 
     /**
-     * 解析traceId
+     * parse the trace id
      * @param traceId
      * @return
      */
@@ -95,7 +91,7 @@ public class TraceLogUtil {
                 traceLogId.setIp(hexToIp(traceArr[0]));
                 traceLogId.setCreateTime(Long.valueOf(traceArr[1], Character.MAX_RADIX));
             } catch (Exception ex) {
-                log.error("解析追踪日志出错:", ex);
+                log.error("parse trace id error:", ex);
             }
         }
 
