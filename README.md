@@ -18,7 +18,7 @@
 <dependency>
   <groupId>com.shixinke.utils</groupId>
   <artifactId>web-utils</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.7</version>
 </dependency>
 ```
 
