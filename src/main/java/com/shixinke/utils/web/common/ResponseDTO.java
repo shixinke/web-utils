@@ -84,6 +84,10 @@ public class ResponseDTO<T> {
         return this;
     }
 
+    public ResponseDTO setError(Errors error) {
+        return setError(error.getCode(), error.getMessage());
+    }
+
     public ResponseDTO <T> setEmpty(String message, Class<T> clz) {
         this.setCode(SUCCESS_CODE);
         this.setMessage(message);
@@ -175,6 +179,10 @@ public class ResponseDTO<T> {
     public static <T> ResponseDTO error(int code, String message, T data) {
         ResponseDTO<T> responseDTO = new ResponseDTO(code, message, false, data);
         return responseDTO;
+    }
+
+    public static <T> ResponseDTO error(Errors error) {
+        return error(error.getCode(), error.getMessage());
     }
 
 
