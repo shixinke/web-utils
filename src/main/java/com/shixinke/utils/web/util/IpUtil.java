@@ -16,8 +16,8 @@ public class IpUtil {
 
     /**
      * Get the IP Address of Client
-     * @param request
-     * @return
+     * @param request http servlet request
+     * @return String
      */
     public static String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
@@ -42,7 +42,7 @@ public class IpUtil {
 
     /**
      * Get local server IP address
-     * @return
+     * @return String
      */
     public static String getLocalIp() {
         String dockerSuffix = ".1";

@@ -78,8 +78,8 @@ public class TraceLogUtil {
 
     /**
      * parse the trace id
-     * @param traceId
-     * @return
+     * @param traceId an unique string of a request
+     * @return TraceLogId
      */
     public static TraceLogId parseTraceId(String traceId) {
         TraceLogId traceLogId = new TraceLogId();
