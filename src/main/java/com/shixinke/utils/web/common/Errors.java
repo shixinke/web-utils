@@ -38,6 +38,22 @@ public enum Errors {
      */
     INVALID_SIGNATURE(4007, "签名验证失败", "sign check failed"),
     /**
+     * request method error
+     */
+    REQUEST_METHOD_ERROR(4008, "请求方式不正确", "request method error"),
+    /**
+     * CSRF token error
+     */
+    CSRF_TOKEN_ERROR(4009, "csrfToken错误", "csrf token error"),
+    /**
+     * expired
+     */
+    EXPIRED(4010, "失效", "expired"),
+    /**
+     * cookie expired
+     */
+    COOKIE_EXPIRED(4011, "cookie失效", "COOKIE expired"),
+    /**
      * server error
      */
     SERVER_ERROR(5000, "服务器开小差", "server internal error"),
@@ -53,6 +69,22 @@ public enum Errors {
      * facade exception
      */
     FACADE_EXCEPTION(5003, "服务异常", "facade exception"),
+    /**
+     * data type conversion exception
+     */
+    CONVERSION_EXCEPTION(5004, "数据格式转换异常", "data type conversion exception"),
+    /**
+     * empty content
+     */
+    EMPTY_CONTENT(5005, "内容为空", "empty content"),
+    /**
+     * not login
+     */
+    NOT_LOGIN(5006, "未登录", "not login"),
+    /**
+     * not enabled
+     */
+    NOT_ENABLED(5007, "功能未开启", "not enabled"),
     /**
      * database error
      */
@@ -102,13 +134,53 @@ public enum Errors {
      */
     READ_TIMEOUT(5405, "网络读取超时", "network read timeout"),
     /**
+     * socket timeout
+     */
+    SOCKET_TIMEOUT(5406, "网络超时", "socket timeout"),
+    /**
+     * retry exception
+     */
+    RETRY_EXCEPTION(5405, "网络重试异常", "retry exception"),
+    /**
+     * execution exception
+     */
+    EXECUTION_EXCEPTION(5406, "执行出错", "execution exception"),
+    /**
+     * http client exception
+     */
+    HTTP_CLIENT_EXCEPTION(5407, "http客户端异常", "http client exception"),
+    /**
      * config error
      */
     CONFIG_ERROR(5500, "配置异常", "config error"),
     /**
+     * config read error
+     */
+    CONFIG_READ_ERROR(5501, "配置读取错误", "config read error"),
+    /**
      * dependency exception
      */
     SEARCH_ERROR(5600, "搜索服务异常", "search error"),
+    /**
+     * search index not exists
+     */
+    SEARCH_INDEX_NOT_EXISTS(5601, "索引不存在", "index not exists"),
+    /**
+     * query dsl error
+     */
+    SEARCH_QUERY_DSL_ERROR(5602, "查询语句错误", "query dsl error"),
+    /**
+     * parse result error
+     */
+    SEARCH_PARSE_RESULT_ERROR(5603, "解析查询结果出错", "parse result error"),
+    /**
+     * pagination error
+     */
+    SEARCH_PAGINATION_ERROR(5604, "分页出错", "pagination error"),
+    /**
+     * mongo error
+     */
+    MONGO_ERROR(5700, "MongoDB服务异常", "mongoDB error"),
     /**
      * component error
      */
@@ -117,6 +189,10 @@ public enum Errors {
      * dependency exception
      */
     DEPENDENCY_EXCEPTION(5900, "依赖服务异常", "dependency exception"),
+    /**
+     * degrade exception
+     */
+    DEGRADE_EXCEPTION(5901, "降级异常", "degrade exception"),
     /**
      * unknown error
      */
