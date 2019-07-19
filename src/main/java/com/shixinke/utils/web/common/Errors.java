@@ -188,11 +188,15 @@ public enum Errors {
     /**
      * dependency exception
      */
-    DEPENDENCY_EXCEPTION(5900, "依赖服务异常", "dependency exception"),
+    DEPENDENCY_EXCEPTION(5801, "依赖服务异常", "dependency exception"),
     /**
      * degrade exception
      */
-    DEGRADE_EXCEPTION(5901, "降级异常", "degrade exception"),
+    DEGRADE_EXCEPTION(5802, "降级异常", "degrade exception"),
+    /**
+     * 业务异常
+     */
+    BUSINESS_ERROR(5900, "业务异常", "business error"),
     /**
      * unknown error
      */
