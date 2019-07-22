@@ -5,6 +5,7 @@ package com.shixinke.utils.web.common;
  * @author shixinke
  */
 public enum Errors {
+    NONE(2000, "无错误", "success"),
     /**
      * validate error
      */
