@@ -74,7 +74,6 @@ public class ResponseDTO<T> {
         this.setCode(code);
         this.setSuccess(false);
         this.setMessage(message);
-        this.setData(null);
         return this;
     }
 
